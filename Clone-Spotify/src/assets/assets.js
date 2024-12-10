@@ -13,8 +13,8 @@ import search_icon from './search.png'
 // import speaker_icon from './speaker.png'
 import stack_icon from './stack.png'
 // import zoom_icon from './zoom.png'
-// import plus_icon from './plus.png'
-// import arrow_icon from './arrow.png'
+import plus_icon from './plus.png'
+import arrow_icon from './arrow.png'
 // import mini_player_icon from './mini-player.png'
 // import queue_icon from './queue.png'
 // import volume_icon from './volume.png'
@@ -40,8 +40,8 @@ export const assets = {
   // speaker_icon,
   stack_icon,
   // zoom_icon,
-  // plus_icon,
-  // arrow_icon,
+  plus_icon,
+  arrow_icon,
   // mini_player_icon,
   // volume_icon,
   // queue_icon,
