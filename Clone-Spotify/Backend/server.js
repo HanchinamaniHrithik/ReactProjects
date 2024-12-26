@@ -1,12 +1,15 @@
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
+import connectDB from './src/Config/Mongo'
+import ConCloud from './src/Config/Cloudinary'
 
 //config
 
 const app = express()
 const port = process.env.PORT || 5001
-
+connectDB()
+ConCloud()
 //Middleware
 
 app.use(express.json())
