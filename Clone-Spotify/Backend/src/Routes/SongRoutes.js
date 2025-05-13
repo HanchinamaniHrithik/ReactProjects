@@ -14,6 +14,6 @@ SongRouter.post(
   ]),
   addSong
 )
-SongRouter.post('/list', listSong)
+SongRouter.get('/list', listSong)
 
 export default SongRouter

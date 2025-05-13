@@ -44,12 +44,12 @@ const addSong = async (req, res) => {
 const listSong = async (req, res) => {
   try {
     const songs = await songModel.find().sort({ createdAt: -1 })
-    res.status(200).json(songs)
+    res.status(200).json({ songs })
   } catch (error) {
-    console.error('Error listing songs:', error)
+    console.error('Error fetching songs:', error)
     res
       .status(500)
-      .json({ message: 'Failed to list songs', error: error.message })
+      .json({ message: 'Failed to fetch songs', error: error.message })
   }
 }
 

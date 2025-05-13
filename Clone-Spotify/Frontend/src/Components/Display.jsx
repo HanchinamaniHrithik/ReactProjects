@@ -6,28 +6,29 @@ import { PlayerContext } from '../context/PlayerContext'
 
 function Display() {
   const { albumsData } = useContext(PlayerContext)
-
   const displayRef = useRef()
   const location = useLocation()
+
   const isAlbum = location.pathname.includes('album')
   const albumId = isAlbum ? location.pathname.split('/').pop() : ''
+
   const bgColor =
     isAlbum && albumsData.length > 0
-      ? albumsData.find((album) => album._id === albumId).bgColour
+      ? albumsData.find((album) => album._id === albumId)?.bgColor || '#121212'
       : '#121212'
 
   useEffect(() => {
-    if (isAlbum) {
-      displayRef.current.style.background = `linear-gradient(${bgColor},#121212)`
-    } else {
-      displayRef.current.style.background = `#121212`
-    }
+    if (!displayRef.current) return
+
+    displayRef.current.style.background = isAlbum
+      ? `linear-gradient(${bgColor},#121212)`
+      : '#121212'
   }, [isAlbum, bgColor])
 
   return (
     <div
       ref={displayRef}
-      className='w-[100%] m-2 px-6 pt-4 rounded bg-[#121212] text-white lg:w-[75%] lg:ml-0'
+      className='w-full m-2 px-6 pt-4 rounded bg-[#121212] text-white lg:w-[75%] lg:ml-0 overflow-y-auto'
     >
       {albumsData.length > 0 ? (
         <Routes>
@@ -36,12 +37,14 @@ function Display() {
             path='/album/:id'
             element={
               <DisplayAlbum
-                album={albumsData.find((album) => album._id == albumId)}
+                album={albumsData.find((album) => album._id === albumId)}
               />
             }
           />
         </Routes>
-      ) : null}
+      ) : (
+        <p className='text-gray-400'>No albums found.</p>
+      )}
     </div>
   )
 }

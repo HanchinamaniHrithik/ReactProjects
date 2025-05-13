@@ -3,8 +3,8 @@ import axios from 'axios'
 
 export const PlayerContext = createContext()
 
-const PlayerContextProvider = (props) => {
-  const url = 'http://localhost:3000'
+const PlayerContextProvider = ({ children }) => {
+  const url = 'http://localhost:5001'
 
   const audioRef = useRef()
   const seekBar = useRef()
@@ -12,7 +12,7 @@ const PlayerContextProvider = (props) => {
 
   const [songsData, setSongsData] = useState([])
   const [albumsData, setAlbumsData] = useState([])
-  const [track, setTrack] = useState(songsData[0])
+  const [track, setTrack] = useState(null)
   const [playStatus, setPlayStatus] = useState(false)
   const [isLooping, setIsLooping] = useState(false)
   const [originalSongsData, setOriginalSongsData] = useState([])
@@ -20,20 +20,13 @@ const PlayerContextProvider = (props) => {
   const [volume, setVolume] = useState(0.5)
   const [isMuted, setIsMuted] = useState(false)
   const [time, setTime] = useState({
-    currentTime: {
-      second: 0,
-      minute: 0,
-    },
-    totalTime: {
-      second: 0,
-      minute: 0,
-    },
+    currentTime: { second: 0, minute: 0 },
+    totalTime: { second: 0, minute: 0 },
   })
 
   const handleVolumeChange = (e) => {
     const vol = parseFloat(e.target.value)
     setVolume(vol)
-    console.log('vol', vol)
     if (audioRef.current) {
       audioRef.current.volume = vol
     }
@@ -51,25 +44,32 @@ const PlayerContextProvider = (props) => {
   }
 
   useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.loop = isLooping
+    }
+  }, [isLooping])
+
+  useEffect(() => {
     setTimeout(() => {
-      audioRef.current.ontimeupdate = () => {
-        seekBar.current.style.width =
-          Math.floor(
-            (audioRef.current.currentTime / audioRef.current.duration) * 100
-          ) + '%'
-        setTime({
-          currentTime: {
-            second: Math.floor(audioRef.current.currentTime % 60),
-            minute: Math.floor(audioRef.current.currentTime / 60),
-          },
-          totalTime: {
-            second: Math.floor(audioRef.current.duration % 60),
-            minute: Math.floor(audioRef.current.duration / 60),
-          },
-        })
+      if (audioRef.current) {
+        audioRef.current.ontimeupdate = () => {
+          const curr = audioRef.current.currentTime
+          const dur = audioRef.current.duration
+          seekBar.current.style.width = `${Math.floor((curr / dur) * 100)}%`
+          setTime({
+            currentTime: {
+              second: Math.floor(curr % 60),
+              minute: Math.floor(curr / 60),
+            },
+            totalTime: {
+              second: Math.floor(dur % 60),
+              minute: Math.floor(dur / 60),
+            },
+          })
+        }
       }
     }, 1000)
-  }, [audioRef])
+  }, [])
 
   const play = () => {
     audioRef.current.play()
@@ -81,30 +81,48 @@ const PlayerContextProvider = (props) => {
     setPlayStatus(false)
   }
 
-  const toggleLoop = () => {
-    setIsLooping(!isLooping)
-  }
-
-  const toggleShuffle = () => {
-    setIsShuffle(!isShuffle)
-  }
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.loop = isLooping
+  const playWithId = async (id) => {
+    const song = songsData.find((item) => item._id === id)
+    if (song) {
+      setTrack(song)
+      await audioRef.current.play()
+      setPlayStatus(true)
     }
-  }, [isLooping])
+  }
+
+  const previousSong = async () => {
+    songsData.forEach(async (item, index) => {
+      if (track && track._id === item._id && index > 0) {
+        setTrack(songsData[index - 1])
+        await audioRef.current.play()
+        setPlayStatus(true)
+      }
+    })
+  }
+
+  const nextSong = async () => {
+    songsData.forEach(async (item, index) => {
+      if (track && track._id === item._id && index < songsData.length - 1) {
+        setTrack(songsData[index + 1])
+        await audioRef.current.play()
+        setPlayStatus(true)
+      }
+    })
+  }
+
+  const seekSong = (e) => {
+    audioRef.current.currentTime =
+      (e.nativeEvent.offsetX / seekBg.current.offsetWidth) *
+      audioRef.current.duration
+  }
 
   const shuffleSongs = () => {
-    const shuffledSongs = [...songsData]
-    for (let i = shuffledSongs.length - 1; i > 0; i--) {
+    const shuffled = [...songsData]
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
-      ;[shuffledSongs[i], shuffledSongs[j]] = [
-        shuffledSongs[j],
-        shuffledSongs[i],
-      ]
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
     }
-    setSongsData(shuffledSongs)
+    setSongsData(shuffled)
   }
 
   useEffect(() => {
@@ -113,61 +131,27 @@ const PlayerContextProvider = (props) => {
     } else {
       setSongsData(originalSongsData)
     }
-  }, [isShuffle, originalSongsData])
-
-  const playWithId = async (id) => {
-    await songsData.map((item) => {
-      if (id === item._id) {
-        setTrack(item)
-      }
-    })
-    await audioRef.current.play()
-    setPlayStatus(true)
-  }
-
-  const previousSong = async () => {
-    songsData.map(async (item, index) => {
-      if (track._id === item._id && index > 0) {
-        await setTrack(songsData[index - 1])
-        await audioRef.current.play()
-        setPlayStatus(true)
-      }
-    })
-  }
-
-  const nextSong = async () => {
-    songsData.map(async (item, index) => {
-      if (track._id === item._id && index < songsData.length - 1) {
-        await setTrack(songsData[index + 1])
-        await audioRef.current.play()
-        setPlayStatus(true)
-      }
-    })
-  }
-
-  const seekSong = async (e) => {
-    audioRef.current.currentTime =
-      (e.nativeEvent.offsetX / seekBg.current.offsetWidth) *
-      audioRef.current.duration
-  }
+  }, [isShuffle])
 
   const getSongsData = async () => {
     try {
-      const response = await axios.get(`${url}/api/song/list`)
-      setSongsData(response.data.songs)
-      setTrack(response.data.songs[0])
-      setOriginalSongsData(response.data.songs)
+      const res = await axios.get(`${url}/api/song/list`)
+      console.log('songs:', res.data.songs)
+      setSongsData(res.data.songs)
+      setOriginalSongsData(res.data.songs)
+      setTrack(res.data.songs[0] || null)
     } catch (error) {
-      console.log('error getSongsData', error)
+      console.log('error getSongsData:', error)
     }
   }
 
   const getAlbumsData = async () => {
     try {
-      const response = await axios.get(`${url}/api/album/list`)
-      setAlbumsData(response.data.albums)
+      const res = await axios.get(`${url}/api/album/list`)
+      console.log('albums:', res.data.albums)
+      setAlbumsData(res.data.albums)
     } catch (error) {
-      console.log('error getSongsData', error)
+      console.log('error getAlbumsData:', error)
     }
   }
 
@@ -176,37 +160,37 @@ const PlayerContextProvider = (props) => {
     getSongsData()
   }, [])
 
-  const contextValue = {
-    audioRef,
-    seekBar,
-    seekBg,
-    track,
-    setTrack,
-    playStatus,
-    setPlayStatus,
-    time,
-    setTime,
-    play,
-    pause,
-    playWithId,
-    previousSong,
-    nextSong,
-    seekSong,
-    songsData,
-    albumsData,
-    isLooping,
-    toggleLoop,
-    isShuffle,
-    toggleShuffle,
-    volume,
-    handleVolumeChange,
-    isMuted,
-    toggleMute,
-  }
-
   return (
-    <PlayerContext.Provider value={contextValue}>
-      {props.children}
+    <PlayerContext.Provider
+      value={{
+        audioRef,
+        seekBar,
+        seekBg,
+        track,
+        setTrack,
+        playStatus,
+        setPlayStatus,
+        time,
+        setTime,
+        play,
+        pause,
+        playWithId,
+        previousSong,
+        nextSong,
+        seekSong,
+        songsData,
+        albumsData,
+        isLooping,
+        toggleLoop: () => setIsLooping((prev) => !prev),
+        isShuffle,
+        toggleShuffle: () => setIsShuffle((prev) => !prev),
+        volume,
+        handleVolumeChange,
+        isMuted,
+        toggleMute,
+      }}
+    >
+      {children}
     </PlayerContext.Provider>
   )
 }

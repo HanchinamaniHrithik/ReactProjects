@@ -1,43 +1,29 @@
 import { useContext } from 'react'
-import AlbumItem from './AlbumItem'
-import Navbar from './Navbar'
-import SongsItem from './SongsItem'
-import { PlayerContext } from './../context/PlayerContext'
+import { PlayerContext } from '../context/PlayerContext'
+import { Link } from 'react-router-dom'
 
-function DisplayHome() {
-  const { songsData, albumsData } = useContext(PlayerContext)
+const DisplayHome = () => {
+  const { albumsData } = useContext(PlayerContext)
+
   return (
-    <>
-      <Navbar />
-      <div className='mb-4'>
-        <h1 className='my-5 font-bold text-2xl'>Featured Charts</h1>
-        <div className='flex overflow-auto'>
-          {albumsData.map((item, index) => (
-            <AlbumItem
-              key={index}
-              image={item.image}
-              name={item.name}
-              desc={item.desc}
-              id={item._id}
-            />
-          ))}
-        </div>
+    <div className='text-white'>
+      <h1 className='text-2xl font-bold mb-4'>Browse Albums</h1>
+      <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+        {albumsData.map((album) => (
+          <Link to={`/album/${album._id}`} key={album._id}>
+            <div className='bg-[#1e1e1e] p-4 rounded-lg hover:bg-[#2e2e2e] transition'>
+              <img
+                src={album.image}
+                alt={album.name}
+                className='rounded w-full h-40 object-cover mb-2'
+              />
+              <h2 className='text-lg font-semibold'>{album.name}</h2>
+              <p className='text-sm text-gray-400'>{album.desc}</p>
+            </div>
+          </Link>
+        ))}
       </div>
-      <div className='mb-4'>
-        <h1 className='my-5 font-bold text-2xl'>Today&apos;s biggest hits</h1>
-        <div className='flex overflow-auto'>
-          {songsData.map((item, index) => (
-            <SongsItem
-              key={index}
-              image={item.image}
-              name={item.name}
-              desc={item.desc}
-              id={item._id}
-            />
-          ))}
-        </div>
-      </div>
-    </>
+    </div>
   )
 }
 
