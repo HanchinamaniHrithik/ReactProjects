@@ -3,11 +3,22 @@ import { PlayerContext } from '../context/PlayerContext'
 import { useParams } from 'react-router-dom'
 
 const DisplayAlbum = () => {
-  const { songsData, albumsData, playWithId } = useContext(PlayerContext)
-  const { id } = useParams()
+  const { album, getSongsByAlbum, playWithId } = useContext(PlayerContext)
+  const [albumSongs, setAlbumSongs] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const album = albumsData.find((a) => a._id === id)
-  const albumSongs = songsData.filter((song) => song.album === album?.name)
+  useEffect(() => {
+    const fetchSongs = async () => {
+      if (album?.name) {
+        const songs = await getSongsByAlbum(album.name)
+        setAlbumSongs(songs)
+        setLoading(false)
+      }
+    }
+    fetchSongs()
+  }, [album])
+
+  if (loading) return <div className='text-white p-4'>Loading songs...</div>
 
   return (
     <div className='text-white'>

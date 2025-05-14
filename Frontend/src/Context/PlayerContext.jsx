@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export const PlayerContext = createContext()
 
-const PlayerContextProvider = ({ children }) => {
+export const PlayerContextProvider = ({ children }) => {
   const url = 'http://localhost:5001'
 
   const audioRef = useRef()
@@ -154,6 +154,15 @@ const PlayerContextProvider = ({ children }) => {
       console.log('error getAlbumsData:', error)
     }
   }
+  const getSongsByAlbum = async (albumName) => {
+    try {
+      const res = await axios.get(`${url}/api/songs/by-album/${albumName}`)
+      return res.data
+    } catch (error) {
+      console.error('Error fetching album songs:', error)
+      return []
+    }
+  }
 
   useEffect(() => {
     getAlbumsData()
@@ -188,11 +197,11 @@ const PlayerContextProvider = ({ children }) => {
         handleVolumeChange,
         isMuted,
         toggleMute,
+        getSongsByAlbum,
       }}
     >
       {children}
     </PlayerContext.Provider>
   )
 }
-
 export default PlayerContextProvider

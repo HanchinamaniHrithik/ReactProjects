@@ -1,7 +1,9 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import { usePlayer } from '../hooks/usePlayer'
 
 function Sidebar() {
+  const { albumsData } = usePlayer()
   return (
     <div className='w-[260px] h-full p-4 flex flex-col gap-4 bg-[#000]'>
       {/* Home & Search */}
@@ -50,6 +52,19 @@ function Sidebar() {
         <button className='text-sm bg-white text-black px-4 py-1 rounded-full'>
           Browse Podcasts
         </button>
+      </div>
+
+      {/* Ablum list */}
+      <div className='space-y-2'>
+        {albumsData?.map((album) => (
+          <Link
+            key={album._id}
+            to={`/album/${album._id}`}
+            className='block p-2 hover:bg-[#2a2a2a] rounded text-sm'
+          >
+            {album.name}
+          </Link>
+        ))}
       </div>
     </div>
   )

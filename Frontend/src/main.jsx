@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import PlayerContextProvider from './context/PlayerContext'
+import PlayerContextProvider from './Context/PlayerContext'
 import App from './App'
 import './index.css'
 

@@ -22,7 +22,7 @@ import arrow_right from './right_arrow.png'
 import arrow_left from './left_arrow.png'
 import spotify_logo from './spotify_logo.png'
 import clock_icon from './clock_icon.png'
-import mute_icon from './mute_icon.png'
+import volume_mute from './volume_mute.png'
 import music_gif from './music_gif.gif'
 
 export const assets = {
@@ -50,6 +50,6 @@ export const assets = {
   arrow_right,
   spotify_logo,
   clock_icon,
-  mute_icon,
+  volume_mute,
   music_gif,
 }
