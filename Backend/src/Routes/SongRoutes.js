@@ -1,5 +1,9 @@
 import express from 'express'
-import { addSong, listSong } from '../Controllers/Songcontroller.js'
+import {
+  addSong,
+  listSong,
+  getSongsByAlbum,
+} from '../Controllers/Songcontroller.js'
 import upload from '../Middleware/multer.js'
 
 const SongRouter = express.Router()
@@ -15,5 +19,6 @@ SongRouter.post(
   addSong
 )
 SongRouter.get('/list', listSong)
+SongRouter.get('/by-album/:albumName', getSongsByAlbum)
 
 export default SongRouter
