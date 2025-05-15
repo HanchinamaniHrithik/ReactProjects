@@ -6,10 +6,11 @@ import ConCloud from './src/Config/Cloudinary.js'
 import SongRouter from './src/Routes/SongRoutes.js'
 import albumRouter from './src/Routes/AlbumRoutes.js'
 //config
+console.log('All env vars:', process.env)
 
 ConCloud()
 const app = express()
-const port = process.env.PORT || 5001
+const port = process.env.PORT || 5000
 connectDB()
 //Middleware files
 

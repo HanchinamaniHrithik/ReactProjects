@@ -4,7 +4,6 @@ import { addAlbum } from '../Controllers/AlbumController.js'
 
 const albumRouter = express.Router()
 
-// ✅ This line is key!
 albumRouter.post('/add', upload.single('image'), addAlbum)
 
 export default albumRouter

@@ -2,7 +2,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import DisplayHome from './DisplayHome'
 import DisplayAlbum from './DisplayAlbum'
 import { useContext, useEffect, useRef } from 'react'
-import { PlayerContext } from '../context/PlayerContext'
+import { PlayerContext } from '../Context/PlayerContext'
 
 function Display() {
   const { albumsData } = useContext(PlayerContext)

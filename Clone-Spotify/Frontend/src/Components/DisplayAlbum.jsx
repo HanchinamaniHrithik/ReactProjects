@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { PlayerContext } from '../context/PlayerContext'
+import { PlayerContext } from '../Context/PlayerContext'
 import { useParams } from 'react-router-dom'
 
 const DisplayAlbum = () => {
