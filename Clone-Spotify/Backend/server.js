@@ -19,9 +19,10 @@ app.use(cors())
 
 //Routes
 
-app.use('/api', SongRouter)
+app.use('/api/song', SongRouter)
 app.use('/api/album', albumRouter)
 
+//Test code in browser/postman
 app.get('/', (req, res) => res.send('API working seamlessly, DW Hrithik'))
 
 app.listen(port, () => console.log(`Server is lisetning on port ${port}`))

@@ -10,6 +10,7 @@ const App = () => {
       <div className='flex flex-1 overflow-hidden'>
         <Sidebar />
         <Display />
+        <UploadSongForm />
       </div>
       <Player />
       <audio ref={audioRef} />

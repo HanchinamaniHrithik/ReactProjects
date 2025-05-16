@@ -1,10 +1,11 @@
 import { createContext, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+const url = import.meta.env.VITE_API_URL
 
 export const PlayerContext = createContext()
 
 export const PlayerContextProvider = ({ children }) => {
-  const url = 'http://localhost:5001'
+  const url = import.meta.env.VITE_API_URL
 
   const audioRef = useRef()
   const seekBar = useRef()
@@ -156,7 +157,8 @@ export const PlayerContextProvider = ({ children }) => {
   }
   const getSongsByAlbum = async (albumName) => {
     try {
-      const res = await axios.get(`${url}/api/songs/by-album/${albumName}`)
+      const res = await axios.get(`${url}/api/song/album/${albumName}`)
+
       return res.data
     } catch (error) {
       console.error('Error fetching album songs:', error)
@@ -173,6 +175,7 @@ export const PlayerContextProvider = ({ children }) => {
     <PlayerContext.Provider
       value={{
         audioRef,
+        axios,
         seekBar,
         seekBg,
         track,
