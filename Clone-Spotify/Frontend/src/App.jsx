@@ -2,6 +2,7 @@ import { usePlayer } from './hooks/usePlayer'
 import Sidebar from './components/Sidebar'
 import Display from './components/Display'
 import Player from './components/Player'
+import UploadSongForm from './components/UploadSongsForm'
 const App = () => {
   const { audioRef } = usePlayer()
 
